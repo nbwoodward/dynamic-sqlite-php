@@ -206,6 +206,25 @@ Update or insert a row into a table.
 		//The row is not added since $strict=true and the record 
 		//attempted to add the column 'fluffyness'.
 
+###update_all($pdo, $table\_name, $array\_of\_records, $strict=false)
+
+Update or insert many rows in a table.
+
+**Note:** This uses prepared statements to significantly decrease the time needed for multiple transactions. 
+####Usage:
+
+		$schema = array('id' => 'integer primary key', 'name' => 'text');
+		$dyna->create_table($pdo, 'myTable', $schema)
+
+		$record_array = array();
+		for ($i=0; $i<20; $i++){
+			$record = array(
+				"name" => "person $i",
+				"age" => $i
+		}
+		$dyna->update_all($pdo, 'myTable, $record_array);
+		//This inserts all of the records into the database much faster than inserting them individually.
+
 ###get($pdo, $table\_name, $id)
 
 Get a row by its id. 

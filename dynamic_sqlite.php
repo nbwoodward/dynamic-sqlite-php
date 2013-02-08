@@ -38,30 +38,26 @@ class dynamic_sqlite {
 	{
 		$this->commit($this->pdo);
 	}
-
-
-	/**
-	 * Commit a transaction of a prepared statement.
-	 *
-	 * -Used in conjuction with begin_transaction() to commit a prepared statement.
-	 * -SQLite databases are by default in autocommit mode.
-	 * @uses	$pdo 	to indicate a database.
-	 * @param	PDO_obj	$pdo
-	 */
-	function commit($pdo)
-	{
-		if ($this->in_transaction) {
-			$pdo->commit();
-			$this->in_transaction = false;
-		}
-	}
 	
 	/**
 	* Begin a transaction.
 	*
 	* -Used to begin an SQL transaction. Use commit() to commit the transaction.
+	* -Use begin_transaction/commit for updating many rows at once. Or use update_all method.
+	* -See http://www.sqlite.org/faq.html#q19 for more information.
 	* @uses 	$pdo 	to indicate a database.
 	* @param	PDO_obj	$pdo
+	*
+	*Example use:
+	*	$rows //array of many rows to insert or update
+	*
+	*	$dyna->begin_transaction();
+	*	
+	*	foreach($rows as $row){
+	*		$dyna->update($pdo,'my_table',$row);
+	*	}
+	*	
+	*	$dyna->commit();
 	*/
 	function begin_transaction($pdo)
 	{
@@ -70,6 +66,26 @@ class dynamic_sqlite {
 
 			$this->in_transaction = true;
 		}
+	}
+
+	/**
+	 * Commit a transaction of a prepared statement.
+	 *
+	 * -Used in conjuction with begin_transaction() to commit a prepared statement.
+	 * -SQLite databases are by default in autocommit mode.
+	 * -Use begin_transaction/commit for updating many rows at once. Or use update_all method.
+	 * -For example use see begin_transaction() above.
+	 * @uses	$pdo 	to indicate a database.
+	 * @param	PDO_obj	$pdo
+	 */
+	function commit($pdo)
+	{
+		$result = false;
+		if ($this->in_transaction) {
+			$this->in_transaction = false;
+			$result = $pdo->commit();
+		}
+		return $result;
 	}
 	
 	/**
@@ -702,6 +718,50 @@ class dynamic_sqlite {
 		return ( ($result != false) ? $pdo->lastinsertid() : 0);
 
 
+	}
+
+	/**
+	* Update many rows in a table quickly.
+	*
+	* -This method can be used to input new rows into a table.
+	* -If $strict is set to true then a record containing a column that does not exist in the table will be rejected.
+	*	Otherwise, new columns will be added automatically and will receive either the TEXT or NUMERIC type.
+	* -This uses prepared statements and is much faster than manually updating many rows at a time.
+	*
+	* @param	PDO_obj	$pdo
+	* @param	string	$table_name
+	* @param	array	$record_array
+	* @param	bool	$strict
+	* @return	bool
+	*
+	*Example input record array:
+	*	$array_of_records 
+	*		an array of arrays of columns and values.  This can be all columns in the table's schema
+	*		or just one or two columns.
+	*		
+	*		eg.	array(
+	*				0 =>	array(
+	*					'id' 	=> 0,
+	*					'name'	=> bill,
+	*					'pay' 	=> ,
+	*					'looks'	=> 'bad'
+	*				),
+	*				1 =>	array(
+	*					'id' 	=> 3,
+	*					'name'	=> nick,
+	*					'looks'	=> 'good'
+	*				),
+	*				...
+	*			)
+	*/
+	function update_all($pdo, $table_name, $array_of_records, $strict = false){
+		$this->begin_transaction($pdo);
+		
+		foreach($array_of_records as $record){
+			$this->update($pdo, $table_name, $record, $strict);
+		}
+
+		return $this->commit($pdo);
 	}
 	
 
