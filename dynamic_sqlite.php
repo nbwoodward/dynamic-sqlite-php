@@ -130,7 +130,7 @@ class dynamic_sqlite {
 			$this->pdo = $pdo;
 			
 			if ($this->auto_transaction) {
-				$this->begin_transaction();
+				$this->begin_transaction($pdo);
 			}
 		}
 		return $pdo;
