@@ -14,6 +14,10 @@
 define("SQLITE_BASEDIR", "../var/dbase");
 
 class dynamic_sqlite {
+	function __construct($auto_transaction=true)
+	{
+		$this->auto_transaction = $auto_transaction;
+	}
 	/**
 	 *  PDO object of more recently opened database.
 	 *
@@ -124,6 +128,10 @@ class dynamic_sqlite {
 		
 		if($pdo) {
 			$this->pdo = $pdo;
+			
+			if ($this->auto_transaction) {
+				$this->begin_transaction();
+			}
 		}
 		return $pdo;
 	}
