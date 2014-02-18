@@ -36,43 +36,378 @@
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+          <p>@ Dynamic Sqlite Readme</p>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>@ License Information -- Released under MIT Open Source License, Please see included license </p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>Copyright (c) 2012 Nick Woodward</p>
+
+<h1>
+<a name="dynamic-sqlite-api" class="anchor" href="#dynamic-sqlite-api"><span class="octicon octicon-link"></span></a>Dynamic SQLite API</h1>
+
+<p>The Dynamic SQLite API provides several methods for easily performing CRUD operations on SQLite databases.</p>
+
+<h2>
+<a name="database-methods" class="anchor" href="#database-methods"><span class="octicon octicon-link"></span></a>Database Methods</h2>
+
+<h3>
+<a name="open_databasedbase_relative_pathname" class="anchor" href="#open_databasedbase_relative_pathname"><span class="octicon octicon-link"></span></a>open_database($dbase_relative_pathname)</h3>
+
+<p>Open a database. Input is the relative pathname of the database file. Return is the PDO handle of the database.</p>
+
+<p><strong>Note:</strong> If the database file does not exist, it will be created, so databases can be created using this method.</p>
+
+<h4>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $pdo = $dyna-&gt;open_database('db/myDatabase.sqlite');
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<h3>
+<a name="delete_databasedbase_relative_pathname" class="anchor" href="#delete_databasedbase_relative_pathname"><span class="octicon octicon-link"></span></a>delete_database($dbase_relative_pathname)</h3>
+
+<h4>
+<a name="usage-1" class="anchor" href="#usage-1"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<p>Delete an SQLite database. Returns 0 on failure, 1 on success.</p>
+
+<pre><code>    $dyna-&gt;delete_database('db/myDatabase.sqlite');
+</code></pre>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="export_databasepdo-array_of_tables_to_export--null" class="anchor" href="#export_databasepdo-array_of_tables_to_export--null"><span class="octicon octicon-link"></span></a>export_database($pdo, $array_of_tables_to_export = null)</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Export a database to an array of tables and their schemas and rows.</p>
+
+<p><strong>Note:</strong>Not recommended for large databases.</p>
+
+<p><strong>Note:</strong>If $array_of_tables_to_export is null, all tables will be exported.</p>
+
+<h4>
+<a name="usage-2" class="anchor" href="#usage-2"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $db = $dyna-&gt;export_database($pdo, array('table1','table2'));
+
+    /* Output:
+    $db = array( 
+        [table1] =&gt; array(
+            [schema] =&gt; array(
+                [id] =&gt; 'INTEGER',
+                [name] =&gt; 'TEXT'
+            )
+            [data] =&gt; array(
+                [0] =&gt; array([id] =&gt; 1, [name] =&gt; 'Bill'),
+                [1] =&gt; array([id] =&gt; 2, [name] =&gt; 'Suzy') 
+            )
+        )
+        [table2] =&gt; array(
+            [schema] =&gt; array(
+                [id] =&gt; 'INTEGER',
+                [animal] =&gt; 'TEXT'
+                [danger] =&gt; 'INTEGER'
+            )
+            [data] =&gt; array(
+                [0] =&gt; array([id] =&gt; 1, [animal] =&gt; 'sheep', [danger] =&gt; 3), 
+                [1] =&gt; array([id] =&gt; 2, [animal] =&gt; 'wolf', [danger] =&gt; 9) 
+            )
+        )
+    )
+
+    */
+</code></pre>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="import_databasepdo-array_of_tables_schemas_and_columns" class="anchor" href="#import_databasepdo-array_of_tables_schemas_and_columns"><span class="octicon octicon-link"></span></a>import_database($pdo, $array_of_tables_schemas_and_columns)</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>Import an array of tables and their schemas and elements into a database.
+<strong>Note:</strong> See the usage section of export_database() for the format of $array_of_tables_schemas_and_columns.</p>
+
+<h4>
+<a name="usage-3" class="anchor" href="#usage-3"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $db = $dyna-&gt;export_database($pdo1);
+    $dyna-&gt;import_database($pdo2, $db);
+</code></pre>
+
+<hr><h2>
+<a name="tables-methods" class="anchor" href="#tables-methods"><span class="octicon octicon-link"></span></a>Tables Methods</h2>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="create_tablepdo-table_name-columns--array" class="anchor" href="#create_tablepdo-table_name-columns--array"><span class="octicon octicon-link"></span></a>create_table($pdo, $table_name, $columns = array())</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Creates a table in a database with column names and types defined by $columns.</p>
+
+<h4>
+<a name="usage-4" class="anchor" href="#usage-4"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $columns = array('id' =&gt; 'INTEGER PRIMARY KEY', 'name' =&gt; 'TEXT', 'age' =&gt; 'NUMERIC');
+    $dyna-&gt;create_table($pdo, 'myTable', $columns);
+</code></pre>
 
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a name="delete_tablepdo-table_name" class="anchor" href="#delete_tablepdo-table_name"><span class="octicon octicon-link"></span></a>delete_table($pdo, $table_name)</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>Deletes a table in a database.</p>
+
+<h4>
+<a name="usage-5" class="anchor" href="#usage-5"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;delete_table($pdo, 'myTable');
+</code></pre>
+
+<h3>
+<a name="stylefont-size105emexport_tablepdo-table_name-order_by--null-limit999-offset0" class="anchor" href="#stylefont-size105emexport_tablepdo-table_name-order_by--null-limit999-offset0"><span class="octicon octicon-link"></span></a>style='font-size:1.05em'&gt;export_table($pdo, $table_name, $order_by = null, $limit=999, $offset=0)</h3>
+
+<p>Export a table or a portion of a table to an array.</p>
+
+<p><strong>Note:</strong> $limit sets the number of rows to export ($limit=10 will export 10 rows).</p>
+
+<p><strong>Note:</strong> $offset sets which row to start selection ($offset = 5 will ignore the first 5 rows, which are dictated by the $order_by clause).</p>
+
+<p><strong>Note:</strong> If $order_by is set to null the order will default to either the primary key or the SQLite auto incremented ROWID. </p>
+
+<h4>
+<a name="usage-6" class="anchor" href="#usage-6"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $myTable = $dyna-&gt;export_table($pdo,'myTable');
+    /*Output:
+    $myTable =  array(
+        [schema] =&gt; array(
+            [id] =&gt; 'INTEGER',
+            [animal] =&gt; 'TEXT'
+            [danger] =&gt; 'INTEGER'
+        )
+        [data] =&gt; array(
+            [0] =&gt; array([id] =&gt; 1, [animal] =&gt; 'tiger', [danger] =&gt; 10), 
+            [1] =&gt; array([id] =&gt; 2, [animal] =&gt; 'sheep', [danger] =&gt; 3), 
+            [2] =&gt; array([id] =&gt; 3, [animal] =&gt; 'wolf', [danger] =&gt; 9) 
+        )
+    )
+    */
+
+    $myTableLimited = $dyna-&gt;export_table($pdo,'myTable', 'name, 2, 1);
+
+    /*Output:
+    $myTableLimited =  array(
+        [schema] =&gt; array(
+            [id] =&gt; 'INTEGER',
+            [animal] =&gt; 'TEXT'
+            [danger] =&gt; 'INTEGER'
+        )
+        [data] =&gt; array(
+            [0] =&gt; array([id] =&gt; 1, [animal] =&gt; 'tiger', [danger] =&gt; 10), 
+            [1] =&gt; array([id] =&gt; 3, [animal] =&gt; 'wolf', [danger] =&gt; 9) 
+        )
+    )
+    */
+</code></pre>
+
+<h3>
+<a name="import_tablepdo-table_name-array_of_schema_and_columns" class="anchor" href="#import_tablepdo-table_name-array_of_schema_and_columns"><span class="octicon octicon-link"></span></a>import_table($pdo, $table_name, $array_of_schema_and_columns)</h3>
+
+<p>Import an array of schema and columns into a database.
+<br><strong>Note:</strong> For the format of the array, see the usage section of export_table().</p>
+
+<h4>
+<a name="usage-7" class="anchor" href="#usage-7"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $myTable = $dyna-&gt;export_table($pdo, 'myTable');
+    $dyna-&gt;import_table($pdo, 'myOtherTable', $myTable);
+</code></pre>
+
+<h3>
+<a name="rename_tablepdo-table_name-new_name" class="anchor" href="#rename_tablepdo-table_name-new_name"><span class="octicon octicon-link"></span></a>rename_table($pdo, $table_name, $new_name)</h3>
+
+<p>Rename a table in a database.</p>
+
+<h4>
+<a name="usage-8" class="anchor" href="#usage-8"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;rename_table($pdo, 'myTable', 'yourTable');
+</code></pre>
+
+<h3>
+<a name="copy_table_to_other_sqlite_dbasepdo-table_name-new_pdo" class="anchor" href="#copy_table_to_other_sqlite_dbasepdo-table_name-new_pdo"><span class="octicon octicon-link"></span></a>copy_table_to_other_sqlite_dbase($pdo, $table_name, $new_pdo)</h3>
+
+<p>Copy a table from one database to another.</p>
+
+<h4>
+<a name="usage-9" class="anchor" href="#usage-9"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $pdo1 = open_database('db1.sqlite');
+    $pdo2 = open_database('db2.sqlite');
+    $dyna-&gt;copy_table_to_other_sqlite_dbase($pdo1, 'myTable', $pdo2);
+</code></pre>
+
+<hr><h2>
+<a name="column-methods" class="anchor" href="#column-methods"><span class="octicon octicon-link"></span></a>Column Methods</h2>
+
+<h3>
+<a name="add_columnpdo-table_name-column_name-column_type--text" class="anchor" href="#add_columnpdo-table_name-column_name-column_type--text"><span class="octicon octicon-link"></span></a>add_column($pdo, $table_name, $column_name, $column_type = 'text')</h3>
+
+<p>Add a column to a table.</p>
+
+<p><strong>Note:</strong> See <a target="\_blank" href="http://www.sqlite.org/datatype3.html">SQLite3 Datatypes</a> for a description of valid column types.</p>
+
+<h4>
+<a name="usage-10" class="anchor" href="#usage-10"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;add_column($pdo, 'myTable', 'age', 'numeric');
+</code></pre>
+
+<h3>
+<a name="delete_columnpdo-table_name-column_name" class="anchor" href="#delete_columnpdo-table_name-column_name"><span class="octicon octicon-link"></span></a>delete_column($pdo, $table_name, $column_name)</h3>
+
+<p>Delete a column from a table.</p>
+
+<h4>
+<a name="usage-11" class="anchor" href="#usage-11"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;delete_column($pdo, 'myTable', 'age');
+</code></pre>
+
+<h3>
+<a name="rename_columnpdo-table_name-column_name-new_name" class="anchor" href="#rename_columnpdo-table_name-column_name-new_name"><span class="octicon octicon-link"></span></a>rename_column($pdo, $table_name, $column_name, $new_name)</h3>
+
+<p>Rename a column in a table.</p>
+
+<h4>
+<a name="usage-12" class="anchor" href="#usage-12"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;rename_column($pdo, 'myTable', 'name', 'animal');
+</code></pre>
+
+<hr><h2>
+<a name="row-methods" class="anchor" href="#row-methods"><span class="octicon octicon-link"></span></a>Row Methods</h2>
+
+<h3>
+<a name="updatepdo-table_name-record_array-strictfalse" class="anchor" href="#updatepdo-table_name-record_array-strictfalse"><span class="octicon octicon-link"></span></a>update($pdo, $table_name, $record_array, $strict=false)</h3>
+
+<p>Update or insert a row into a table.</p>
+
+<p><strong>Note:</strong> Setting $strict=false allows new columns can be added through a record. Setting $strict=true will reject any entry that attempts to add a column. See usage.</p>
+
+<p><strong>Note:</strong> The type of a column added through a record will be assigned 'text' or 'numeric' accordingly.</p>
+
+<h4>
+<a name="usage-13" class="anchor" href="#usage-13"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $schema = array('id' =&gt; 'integer primary key', 'name' =&gt; 'text');
+    $dyna-&gt;create_table($pdo, 'myTable', $schema)
+
+    $record = array('id' =&gt; 0 , 'name' =&gt; 'lion', 'danger' = 9);
+    $dyna-&gt;update($pdo, 'myTable, $record);
+    //This adds the column 'danger' to the table (since $strict defaults to false)
+
+    $record = array('id' =&gt; 0 , 'name' =&gt; 'sheep', 'fluffyness' = 8);
+    $dyna-&gt;update($pdo, 'myTable, $record, true);
+    //The row is not added since $strict=true and the record 
+    //attempted to add the column 'fluffyness'.
+</code></pre>
+
+<h3>
+<a name="update_allpdo-table_name-array_of_records-strictfalse" class="anchor" href="#update_allpdo-table_name-array_of_records-strictfalse"><span class="octicon octicon-link"></span></a>update_all($pdo, $table_name, $array_of_records, $strict=false)</h3>
+
+<p>Update or insert many rows in a table.</p>
+
+<p><strong>Note:</strong> This uses prepared statements to significantly decrease the time needed for multiple transactions. </p>
+
+<h4>
+<a name="usage-14" class="anchor" href="#usage-14"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $schema = array('id' =&gt; 'integer primary key', 'name' =&gt; 'text');
+    $dyna-&gt;create_table($pdo, 'myTable', $schema)
+
+    $record_array = array();
+    for ($i=0; $i&lt;20; $i++){
+        $record = array(
+            "name" =&gt; "person $i",
+            "age" =&gt; $i
+    }
+    $dyna-&gt;update_all($pdo, 'myTable, $record_array);
+    //This inserts all of the records into the database much faster than inserting them individually.
+</code></pre>
+
+<h3>
+<a name="getpdo-table_name-id" class="anchor" href="#getpdo-table_name-id"><span class="octicon octicon-link"></span></a>get($pdo, $table_name, $id)</h3>
+
+<p>Get a row by its id. </p>
+
+<h4>
+<a name="usage-15" class="anchor" href="#usage-15"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;get($pdo,'myTable', 1) //Returns the row with 'id' = 1.
+</code></pre>
+
+<h3>
+<a name="deletepdo-table_name-id" class="anchor" href="#deletepdo-table_name-id"><span class="octicon octicon-link"></span></a>delete($pdo, $table_name, $id)</h3>
+
+<p>Delete a row with a given id.</p>
+
+<h4>
+<a name="usage-16" class="anchor" href="#usage-16"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $dyna-&gt;delete($pdo, 'myTable', 1) //Deletes rows with 'id' = 1
+</code></pre>
+
+<h3>
+<a name="query-pdo-query-" class="anchor" href="#query-pdo-query-"><span class="octicon octicon-link"></span></a>query( $pdo, $query )</h3>
+
+<p>Query a database. Returns all rows that satisfy the query.</p>
+
+<h4>
+<a name="usage-17" class="anchor" href="#usage-17"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $query = "SELECT * FROM myTable WHERE 'name' = 'bob'"
+    $dyna-&gt;query($pdo,$query); 
+    //Returns all rows where 'name' = 'bob'
+</code></pre>
+
+<h3>
+<a name="delete_by_querypdo-table_name-query" class="anchor" href="#delete_by_querypdo-table_name-query"><span class="octicon octicon-link"></span></a>delete_by_query($pdo, $table_name, $query)</h3>
+
+<p>Delete all rows that satisfy a given query.</p>
+
+<h4>
+<a name="usage-18" class="anchor" href="#usage-18"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $query = "'name' = 'bob'"
+    $dyna-&gt;delete_by_query($pdo, 'myTable', $query); 
+    //Deletes all rows where 'name' = 'bob'
+</code></pre>
+
+<hr><h2>
+<a name="utilityother-methods" class="anchor" href="#utilityother-methods"><span class="octicon octicon-link"></span></a>Utility/Other Methods</h2>
+
+<h3>
+<a name="escapestr" class="anchor" href="#escapestr"><span class="octicon octicon-link"></span></a>escape($str)</h3>
+
+<p>Adds quotes to a string and escapes special charaters.
+<br><strong>Note:</strong>See documentation on <a target="_blank" href="http://php.net/manual/en/pdo.quote.php">PDO::quote()</a> for explanation and usage.</p>
+
+<h3>
+<a name="get_table_schemapdo-table_name" class="anchor" href="#get_table_schemapdo-table_name"><span class="octicon octicon-link"></span></a>get_table_schema($pdo, $table_name)</h3>
+
+<p>Returns the schema of a table. </p>
+
+<h4>
+<a name="usage-19" class="anchor" href="#usage-19"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<pre><code>    $schema = $dyna-&gt;get_table_schema($pdo, 'myTable');
+
+    /* Output:
+    $schema = array(
+        [id] =&gt; 'integer',
+        [name] =&gt; 'text'
+    )
+    */
+</code></pre>
         </article>
       </div>
     </div>
     <footer>
       <div class="owner">
-      <p><a href="https://github.com/nbwoodward" class="avatar"><img src="https://0.gravatar.com/avatar/51058c6307479eec1ed1f0e28fdba9f9?d=https%3A%2F%2Fidenticons.github.com%2Fa6e859bff85190231538f6be09ddf168.png&amp;r=x&amp;s=60" width="48" height="48"/></a> <a href="https://github.com/nbwoodward">nbwoodward</a> maintains <a href="https://github.com/nbwoodward/dynamic-sqlite-php">Dynamic-sqlite-php</a></p>
+      <p><a href="https://github.com/nbwoodward" class="avatar"><img src="https://1.gravatar.com/avatar/51058c6307479eec1ed1f0e28fdba9f9?d=https%3A%2F%2Fidenticons.github.com%2Fa6e859bff85190231538f6be09ddf168.png&amp;r=x&amp;s=60" width="48" height="48"/></a> <a href="https://github.com/nbwoodward">nbwoodward</a> maintains <a href="https://github.com/nbwoodward/dynamic-sqlite-php">Dynamic-sqlite-php</a></p>
 
 
       </div>
